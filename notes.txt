@@ -1,0 +1,74 @@
+SQL allows for four types of commands
+
+create, read update delete. these four operations are called CRUD
+
+sqlite3 favorites.db
+
+.mode csv .import favorites.csv favorites
+.mode table
+
+.scheme < see struct of the database
+
+SELECT * FROM favorites; - prints every row in the database
+
+SELECT COUNT(*) FROM favorites; 
+
+SELECT DISTINCT language FROM favorites; <-- all unique things
+people selected (python, c, scratch)
+
+SELECT COUNT(DISTINCT language) FROM favorites; <--- number
+of unique languages people selected
+
+GROUP BY
+LIKE
+LIMIT
+ORDER BY
+WHERE
+
+SELECT COUNT(*) FROM favorites WHERE language = 'C';  <-----
+how many people like C?
+
+SELECT COUNT(*) FROM favorites WHERE language = 'C' AND pr
+oblem = 'Hello, World'; <---------- how many people liked c
+and hello world?
+
+SELECT COUNT(*) FROM 
+favorites WHERE language = 'C' 
+AND (problem = 'Hello, World' OR problem = 'Hello, It''s Me');
+
+SELECT COUNT(*) FROM favorites WHERE language = 'C' AND problem 
+LIKE 'Hello, %';
+^ more liberal than regular select query
+
+SELECT language, COUNT(*) FROM favorites GROUP BY language <
+how many people liked each individual language?
+
+SELECT language, COUNT(*) FROM favorites GROUP BY language ORDER BY COUNT(*);
+^ how many people liked each language, in sorted order?
+
+SELECT language, COUNT(*) AS n FROM favorites GROUP BY language ORDER BY n DESC;
+^ reverse sorted order with pretty aliases
+
+SELECT language, COUNT(*) AS n FROM favorites GROUP BY language ORDER BY n DESC LIMIT 1;
+^ gimme the most popular language in a nice table.
+
+SELECT language as programminglang, COUNT(*) AS counter FROM favorites GROUP BY language ORDER BY counter DESC LIMIT 1; 
+^ i wrote this query myself, making top language with nice categories
+
+INSERT INTO table (column, ...) VALUES(value, ...)
+
+INSERT INTO table (column, ...) VALUES(value, ...)
+
+INSERT INTO favorites (language, problem) VALUES('SQL', 'Fiftyville');
+
+DELETE FROM table WHERE condition;
+
+DELETE FROM favorites; < destroys the entire table [dont do it]
+
+DELETE FROM favorites WHERE Timestamp IS NULL;
+
+UPDATE table SET column = value WHERE condition;
+
+UPDATE favorites SET language = 'SQL', problem = 'Fiftyville'; <
+obliterates the table, there is no undo, makes everyones favorite language
+and SQL and fiftyville
