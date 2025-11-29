@@ -72,3 +72,123 @@ UPDATE table SET column = value WHERE condition;
 UPDATE favorites SET language = 'SQL', problem = 'Fiftyville'; <
 obliterates the table, there is no undo, makes everyones favorite language
 and SQL and fiftyville
+
+---shows----
+
+SELECT * FROM ratings LIMIT 10;
+
+CREATE TABLE shows (
+    id INTEGER,
+    title TEXT NOT NULL,
+    year NUMERIC,
+    episodes INTEGER,
+    PRIMARY KEY(id)
+);
+
+CREATE TABLE ratings (
+    show_id INTEGER NOT NULL,
+    rating REAL NOT NULL,
+    votes INTEGER NOT NULL,
+    FOREIGN KEY(show_id) REFERENCES shows(id)
+);
+
+last line - there is a relationship between this table and
+another
+
+within the world of sqlite, we have some datatypes available to us
+
+BLOB < binary large object
+INTEGER < simple numbers
+NUMERIC < numbers, but dates/times/years etc
+REAL < floating point values with decimal points
+TEXT < strings
+
+NOT NULL < when creating a table, what kinds of vals can be there
+
+the database software itself can prevent you or other people
+from removing or adding data to the database that shouldnt be there
+
+UNIQUE 
+
+SELECT * FROM ratings WHERE rating >= 6.0 LIMIT 10;
+^ select from ratings with a bigger rating than 6, limit 10.
+
+SELECT show_id FROM ratings where rating >= 6.0 LIMIT 10;
+
+SELECT * FROM shows WHERE ID = 62614;
+
+SELECT * FROM shows WHERE id IN (SELECT show_id FROM ratings WHERE rating >= 6.0) LIMIT 10;
+select shows where their rating is bigger than 6, use SELECT show_id
+
+SELECT title FROM shows WHERE id IN (SELECT show_id FROM r
+atings WHERE rating >= 6.0) LIMIT 10;
+
+sqlite> SELECT title FROM shows WHERE id IN
+   ...> (SELECT show_id FROM ratings WHERE rating >= 6.0)
+   ...> LIMIT 10;
+
+JOIN
+
+SELECT * FROM shows JOIN ratings ON shows.id = ratings.show_id WHERE rating >= 6.0 LIMIT 10;
+
+SELECT title, rating FROM shows JOIN ratings ON shows.id =
+ ratings.show_id WHERE rating >= 6.0 LIMIT 10;
+
+joining tables together
+
+SELECT genre FROM genres WHERE show_id = (SELECT id FROM shows WHERE title = 'Catweazle');
+
+SELECT * FROM shows JOIN genres ON shows.id = genres.show_id WHERE id = 63881;
+
+SELECT genre FROM shows JOIN genres on shows.id = genres.s
+how_id WHERE id = 63881;
+
+sqlite> SELECT person_id FROM stars WHERE show_id = (
+(x1...> SELECT id FROM shows WHERE title = 'The Office' AND year =
+(x1...> 2005);
+
+sqlite> SELECT name FROM people WHERE id IN 
+   ...> (SELECT person_id FROM stars WHERE show_id =
+(x1...> (SELECT id FROM shows WHERE title = 'The Office' AND year = 2005));
+^ all stars from the Office
+
+sqlite> SELECT title FROM shows WHERE id IN
+   ...> (SELECT show_id FROM stars WHERE person_id =
+(x1...> (SELECT id FROM people WHERE name = 'Steve Carell'));
+^ all shows steve carell has been in
+
+sqlite> SELECT title FROM shows
+   ...> JOIN stars ON shows.id = stars.show_id
+   ...> JOIN people ON stars.person_id = people.id
+   ...> WHERE name = 'Steve Carell';
+
+sqlite> SELECT title FROM shows, stars, people
+   ...> WHERE shows.id = stars.show_id
+   ...> AND people.id = stars.person_id
+   ...> AND name = 'Steve Carell';
+
+indexes
+
+CREATE INDEX title_index ON shows(title);
+^ speeds up queries by several orders of magnitude
+underneath the hood, they make a B-tree data structures
+
+B-Trees (dsa?)
+
+sqlite> SELECT title FROM shows where id IN
+   ...> (SELECT show_id FROM stars WHERE person_id =
+(x1...> (SELECT id FROM people WHERE name = 'Steve Carell'));
+
+sqlite> SELECT title FROM shows WHERE id IN
+   ...> (SELECT show_id FROM stars WHERE person_id = 
+(x1...> (SELECT id FROM people WHERE name = 'Steve Carell'));
+
+index is BLAZING fast using b-trees to spead up queries. 
+
+BEGIN TRANSACTION
+COMMIT
+ROLLBACK
+
+SQL injection attacks
+
+never trust user input
